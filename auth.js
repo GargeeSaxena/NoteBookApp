@@ -7,12 +7,22 @@ async function initFirebase() {
         const res = await fetch('/config');
         const cfg = await res.json();
         const config = cfg.firebase || {};
+        if (!config.apiKey || !config.authDomain || !config.projectId) {
+            const el = document.getElementById('authError');
+            if (el) {
+                el.style.display = '';
+                el.textContent = 'Missing Firebase config. Check env vars on Render.';
+            }
+            return;
+        }
         firebaseApp = firebase.initializeApp(config);
         firebaseAuth = firebase.auth();
 
         // Process redirect result AFTER auth is ready
         try {
-            await firebaseAuth.getRedirectResult();
+            if (firebaseAuth && typeof firebaseAuth.getRedirectResult === 'function') {
+                await firebaseAuth.getRedirectResult();
+            }
         } catch (err) {
             const el = document.getElementById('authError');
             if (el && err && err.message) {
@@ -65,12 +75,16 @@ async function initFirebase() {
 async function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-        await firebaseAuth.signInWithRedirect(provider);
+        await firebaseAuth.signInWithPopup(provider);
     } catch (err) {
-        const el = document.getElementById('authError');
-        if (el) {
-            el.style.display = '';
-            el.textContent = (err && err.message) || 'Authentication failed';
+        try {
+            await firebaseAuth.signInWithRedirect(provider);
+        } catch (err2) {
+            const el = document.getElementById('authError');
+            if (el) {
+                el.style.display = '';
+                el.textContent = (err2 && err2.message) || (err && err.message) || 'Authentication failed';
+            }
         }
     }
 }
