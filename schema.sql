@@ -72,8 +72,14 @@ before update on public.users
 for each row execute function public.set_updated_at();
 
 alter table public.users enable row level security;
-create policy if not exists "users read" on public.users for select using (true);
-create policy if not exists "users upsert" on public.users for insert with check (true);
-create policy if not exists "users update" on public.users for update using (true) with check (true);
+
+drop policy if exists "users read" on public.users;
+create policy "users read" on public.users for select using (true);
+
+drop policy if exists "users upsert" on public.users;
+create policy "users upsert" on public.users for insert with check (true);
+
+drop policy if exists "users update" on public.users;
+create policy "users update" on public.users for update using (true) with check (true);
 
 
