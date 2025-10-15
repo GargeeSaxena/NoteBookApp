@@ -16,6 +16,7 @@ async function initFirebase() {
                 header.innerHTML = '📝 My Notes — ' + (user.displayName || 'Signed in');
                 document.getElementById('authActions').innerHTML = '<button id="signOutBtn">Sign out</button>';
                 document.getElementById('signOutBtn').onclick = signOut;
+                document.getElementById('authSection').style.display = 'none';
                 // Upsert user profile in backend
                 try {
                     await fetch('/api/users/upsert', {
@@ -33,8 +34,10 @@ async function initFirebase() {
                 document.dispatchEvent(new CustomEvent('auth-signed-in'));
             } else {
                 header.innerHTML = '📝 My Notes';
-                document.getElementById('authActions').innerHTML = '<button id="signInBtn">Sign in with Google</button>';
-                document.getElementById('signInBtn').onclick = signInWithGoogle;
+                document.getElementById('authActions').innerHTML = '';
+                const btn = document.getElementById('signInBtn');
+                if (btn) btn.onclick = signInWithGoogle;
+                document.getElementById('authSection').style.display = '';
                 document.dispatchEvent(new CustomEvent('auth-signed-out'));
             }
         });
@@ -45,7 +48,20 @@ async function initFirebase() {
 
 async function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    await firebaseAuth.signInWithPopup(provider);
+    try {
+        await firebaseAuth.signInWithPopup(provider);
+    } catch (e) {
+        // Fallback to redirect in environments where popup is blocked
+        try {
+            await firebaseAuth.signInWithRedirect(provider);
+        } catch (err) {
+            const el = document.getElementById('authError');
+            if (el) {
+                el.style.display = '';
+                el.textContent = (err && err.message) || (e && e.message) || 'Authentication failed';
+            }
+        }
+    }
 }
 
 async function signOut() {
