@@ -21,10 +21,19 @@ class NotesApp {
         if (!title || !content) return;
 
         try {
+            const idToken = await getIdToken();
+            if (!idToken) {
+                alert('Please sign in to save notes.');
+                return;
+            }
             const res = await fetch('/api/notes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content })
+                body: JSON.stringify({ title, content }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + idToken
+                }
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to save note');
@@ -43,7 +52,17 @@ class NotesApp {
 
     async fetchNotes() {
         try {
-            const res = await fetch('/api/notes');
+            const idToken = await getIdToken();
+            if (!idToken) {
+                // Not signed in yet
+                document.getElementById('notesList').innerHTML = '<div class="empty-state">Sign in to view your notes.</div>';
+                return;
+            }
+            const res = await fetch('/api/notes', {
+                headers: {
+                    'Authorization': 'Bearer ' + idToken
+                }
+            });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to load notes');
             this.notes = data.notes || [];

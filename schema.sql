@@ -8,6 +8,7 @@ create extension if not exists pg_trgm;  -- for gin_trgm_ops
 -- 1) Notes table
 create table if not exists public.notes (
     id uuid primary key default gen_random_uuid(),
+    user_id text not null,
     title text not null check (char_length(title) <= 200),
     content text not null,
     created_at timestamptz not null default now(),
@@ -34,28 +35,29 @@ alter table public.notes enable row level security;
 -- For demo/public app (no auth), allow all operations. If you later add auth,
 -- replace these with per-user policies keyed by auth.uid().
 drop policy if exists "Enable read for all users" on public.notes;
-create policy "Enable read for all users"
+create policy "Enable read own notes"
   on public.notes for select
-  using (true);
+  using (auth.uid()::text = user_id);
 
 drop policy if exists "Enable insert for all users" on public.notes;
-create policy "Enable insert for all users"
+create policy "Enable insert own notes"
   on public.notes for insert
-  with check (true);
+  with check (auth.uid()::text = user_id);
 
 drop policy if exists "Enable update for all users" on public.notes;
-create policy "Enable update for all users"
+create policy "Enable update own notes"
   on public.notes for update
-  using (true)
-  with check (true);
+  using (auth.uid()::text = user_id)
+  with check (auth.uid()::text = user_id);
 
 drop policy if exists "Enable delete for all users" on public.notes;
-create policy "Enable delete for all users"
+create policy "Enable delete own notes"
   on public.notes for delete
-  using (true);
+  using (auth.uid()::text = user_id);
 
 -- 4) Helpful index for search by title and time ordering
 create index if not exists idx_notes_created_at on public.notes (created_at desc);
+create index if not exists idx_notes_user_id on public.notes (user_id);
 create index if not exists idx_notes_title_trgm on public.notes using gin (title gin_trgm_ops);
 
 
