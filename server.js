@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Ensure Firebase redirect handler path doesn't 404 (serve SPA entry)
+app.get('/__/auth/handler', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Support Firebase Auth redirect handler path when not on Firebase Hosting
 // No special handler needed for popup flow
 
