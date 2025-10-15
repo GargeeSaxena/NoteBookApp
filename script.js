@@ -1,12 +1,12 @@
 class NotesApp {
     constructor() {
-        this.notes = this.loadNotes();
+        this.notes = [];
         this.init();
     }
 
     init() {
         this.bindEvents();
-        this.renderNotes();
+        this.fetchNotes();
     }
 
     bindEvents() {
@@ -14,44 +14,57 @@ class NotesApp {
         form.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
-        
         const title = document.getElementById('noteTitle').value.trim();
         const content = document.getElementById('noteContent').value.trim();
-        
-        if (title && content) {
-            this.addNote(title, content);
+        if (!title || !content) return;
+
+        try {
+            const res = await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to save note');
+            this.notes.unshift({
+                id: data.note.id,
+                title: data.note.title,
+                content: data.note.content,
+                created_at: data.note.created_at
+            });
             document.getElementById('noteForm').reset();
+            this.renderNotes();
+        } catch (err) {
+            alert('Error saving note: ' + err.message);
         }
     }
 
-    addNote(title, content) {
-        const note = {
-            id: Date.now().toString(),
-            title,
-            content,
-            createdAt: new Date().toISOString()
-        };
-        
-        this.notes.unshift(note);
-        this.saveNotes();
-        this.renderNotes();
+    async fetchNotes() {
+        try {
+            const res = await fetch('/api/notes');
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to load notes');
+            this.notes = data.notes || [];
+            this.renderNotes();
+        } catch (err) {
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = `<div class="empty-state">Failed to load notes: ${this.escapeHtml(err.message)}</div>`;
+        }
     }
 
     renderNotes() {
         const notesList = document.getElementById('notesList');
-        
-        if (this.notes.length === 0) {
+        if (!this.notes || this.notes.length === 0) {
             notesList.innerHTML = '<div class="empty-state">No notes yet. Create your first note above!</div>';
             return;
         }
-        
         notesList.innerHTML = this.notes.map(note => `
             <div class="note-item">
                 <div class="note-title">${this.escapeHtml(note.title)}</div>
                 <div class="note-content">${this.escapeHtml(note.content)}</div>
-                <div class="note-date">Created: ${new Date(note.createdAt).toLocaleString()}</div>
+                <div class="note-date">Created: ${new Date(note.created_at).toLocaleString()}</div>
             </div>
         `).join('');
     }
@@ -61,18 +74,8 @@ class NotesApp {
         div.textContent = text;
         return div.innerHTML;
     }
-
-    saveNotes() {
-        localStorage.setItem('notes', JSON.stringify(this.notes));
-    }
-
-    loadNotes() {
-        const saved = localStorage.getItem('notes');
-        return saved ? JSON.parse(saved) : [];
-    }
 }
 
-// Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     new NotesApp();
 });
