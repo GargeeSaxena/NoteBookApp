@@ -76,6 +76,22 @@ app.post('/api/notes', async (req, res) => {
     return res.status(201).json({ note: data });
 });
 
+// API: Upsert user profile
+app.post('/api/users/upsert', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ error: 'Supabase is not configured on the server.' });
+    }
+    const { id, email, display_name, photo_url } = req.body || {};
+    if (!id) return res.status(400).json({ error: 'Missing id' });
+    const { data, error } = await supabase
+        .from('users')
+        .upsert({ id, email, display_name, photo_url })
+        .select()
+        .single();
+    if (error) return res.status(500).json({ error: error.message });
+    return res.json({ user: data });
+});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Notes App is running on port ${PORT}`);

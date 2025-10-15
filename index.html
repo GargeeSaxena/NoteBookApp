@@ -13,7 +13,7 @@
             <div id="authActions" style="margin-top:10px;"></div>
         </header>
         
-        <div class="note-form">
+        <div class="note-form" id="noteFormContainer" style="display:none;">
             <h2>Create New Note</h2>
             <form id="noteForm">
                 <input type="text" id="noteTitle" placeholder="Note title..." required>
@@ -22,7 +22,7 @@
             </form>
         </div>
         
-        <div class="notes-section">
+        <div class="notes-section" id="notesSection" style="display:none;">
             <h2>Your Notes</h2>
             <div id="notesList" class="notes-list">
                 <!-- Notes will be displayed here -->

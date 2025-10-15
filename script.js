@@ -6,7 +6,16 @@ class NotesApp {
 
     init() {
         this.bindEvents();
-        this.fetchNotes();
+        // Wait for auth
+        document.addEventListener('auth-signed-in', () => {
+            document.getElementById('noteFormContainer').style.display = '';
+            document.getElementById('notesSection').style.display = '';
+            this.fetchNotes();
+        });
+        document.addEventListener('auth-signed-out', () => {
+            document.getElementById('noteFormContainer').style.display = 'none';
+            document.getElementById('notesSection').style.display = 'none';
+        });
     }
 
     bindEvents() {

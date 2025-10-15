@@ -56,3 +56,24 @@ create index if not exists idx_notes_user_id on public.notes (user_id);
 create index if not exists idx_notes_title_trgm on public.notes using gin (title gin_trgm_ops);
 
 
+-- 5) Users table to store basic profile
+create table if not exists public.users (
+    id text primary key, -- firebase uid
+    email text,
+    display_name text,
+    photo_url text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_users_set_updated_at on public.users;
+create trigger trg_users_set_updated_at
+before update on public.users
+for each row execute function public.set_updated_at();
+
+alter table public.users enable row level security;
+create policy if not exists "users read" on public.users for select using (true);
+create policy if not exists "users upsert" on public.users for insert with check (true);
+create policy if not exists "users update" on public.users for update using (true) with check (true);
+
+
