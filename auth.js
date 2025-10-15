@@ -36,9 +36,8 @@ async function signOut() {
     await firebaseAuth.signOut();
 }
 
-async function getIdToken() {
-    if (!currentUser) return null;
-    return await currentUser.getIdToken();
+async function getUserId() {
+    return currentUser ? currentUser.uid : null;
 }
 
 document.addEventListener('DOMContentLoaded', initFirebase);

@@ -35,25 +35,17 @@ alter table public.notes enable row level security;
 -- For demo/public app (no auth), allow all operations. If you later add auth,
 -- replace these with per-user policies keyed by auth.uid().
 drop policy if exists "Enable read for all users" on public.notes;
-create policy "Enable read own notes"
-  on public.notes for select
-  using (auth.uid()::text = user_id);
+-- Using anon key only; scope at application layer with user_id.
+create policy "Enable read" on public.notes for select using (true);
 
 drop policy if exists "Enable insert for all users" on public.notes;
-create policy "Enable insert own notes"
-  on public.notes for insert
-  with check (auth.uid()::text = user_id);
+create policy "Enable insert" on public.notes for insert with check (true);
 
 drop policy if exists "Enable update for all users" on public.notes;
-create policy "Enable update own notes"
-  on public.notes for update
-  using (auth.uid()::text = user_id)
-  with check (auth.uid()::text = user_id);
+create policy "Enable update" on public.notes for update using (true) with check (true);
 
 drop policy if exists "Enable delete for all users" on public.notes;
-create policy "Enable delete own notes"
-  on public.notes for delete
-  using (auth.uid()::text = user_id);
+create policy "Enable delete" on public.notes for delete using (true);
 
 -- 4) Helpful index for search by title and time ordering
 create index if not exists idx_notes_created_at on public.notes (created_at desc);
