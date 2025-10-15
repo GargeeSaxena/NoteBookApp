@@ -1,6 +1,10 @@
 -- Supabase SQL schema for NoteBook App
 -- Run this in Supabase SQL editor.
 
+-- 0) Ensure required extensions are enabled BEFORE creating trigram index
+create extension if not exists pgcrypto; -- for gen_random_uuid
+create extension if not exists pg_trgm;  -- for gin_trgm_ops
+
 -- 1) Notes table
 create table if not exists public.notes (
     id uuid primary key default gen_random_uuid(),
@@ -53,9 +57,5 @@ create policy "Enable delete for all users"
 -- 4) Helpful index for search by title and time ordering
 create index if not exists idx_notes_created_at on public.notes (created_at desc);
 create index if not exists idx_notes_title_trgm on public.notes using gin (title gin_trgm_ops);
-
--- Extensions (enable if not already enabled in your project)
-create extension if not exists pg_trgm with schema public;
-create extension if not exists pgcrypto with schema public; -- for gen_random_uuid
 
 
