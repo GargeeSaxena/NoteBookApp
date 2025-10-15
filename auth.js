@@ -64,6 +64,20 @@ async function signInWithGoogle() {
     }
 }
 
+// Handle redirect results after returning from Google
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await firebaseAuth.getRedirectResult();
+    } catch (err) {
+        // If the redirect flow produced an error, show it
+        const el = document.getElementById('authError');
+        if (el && err && err.message) {
+            el.style.display = '';
+            el.textContent = err.message;
+        }
+    }
+});
+
 async function signOut() {
     await firebaseAuth.signOut();
 }
