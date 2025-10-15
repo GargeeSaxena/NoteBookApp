@@ -9,6 +9,22 @@ async function initFirebase() {
         const config = cfg.firebase || {};
         firebaseApp = firebase.initializeApp(config);
         firebaseAuth = firebase.auth();
+
+        // Process redirect result AFTER auth is ready
+        try {
+            await firebaseAuth.getRedirectResult();
+        } catch (err) {
+            const el = document.getElementById('authError');
+            if (el && err && err.message) {
+                el.style.display = '';
+                el.textContent = err.message;
+            }
+        }
+
+        // Ensure button is wired on first load
+        const btn = document.getElementById('signInBtn');
+        if (btn) btn.onclick = signInWithGoogle;
+
         firebaseAuth.onAuthStateChanged(async (user) => {
             currentUser = user;
             const header = document.querySelector('header h1');
@@ -49,34 +65,15 @@ async function initFirebase() {
 async function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-        await firebaseAuth.signInWithPopup(provider);
-    } catch (e) {
-        // Fallback to redirect in environments where popup is blocked
-        try {
-            await firebaseAuth.signInWithRedirect(provider);
-        } catch (err) {
-            const el = document.getElementById('authError');
-            if (el) {
-                el.style.display = '';
-                el.textContent = (err && err.message) || (e && e.message) || 'Authentication failed';
-            }
+        await firebaseAuth.signInWithRedirect(provider);
+    } catch (err) {
+        const el = document.getElementById('authError');
+        if (el) {
+            el.style.display = '';
+            el.textContent = (err && err.message) || 'Authentication failed';
         }
     }
 }
-
-// Handle redirect results after returning from Google
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        await firebaseAuth.getRedirectResult();
-    } catch (err) {
-        // If the redirect flow produced an error, show it
-        const el = document.getElementById('authError');
-        if (el && err && err.message) {
-            el.style.display = '';
-            el.textContent = err.message;
-        }
-    }
-});
 
 async function signOut() {
     await firebaseAuth.signOut();
