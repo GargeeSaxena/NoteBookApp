@@ -25,9 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // Support Firebase Auth redirect handler path when not on Firebase Hosting
-app.get('/__/auth/handler', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// No special handler needed for popup flow
 
 // Public config for Firebase client
 app.get('/config', (req, res) => {

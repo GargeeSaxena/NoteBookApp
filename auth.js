@@ -18,18 +18,7 @@ async function initFirebase() {
         firebaseApp = firebase.initializeApp(config);
         firebaseAuth = firebase.auth();
 
-        // Process redirect result AFTER auth is ready
-        try {
-            if (firebaseAuth && typeof firebaseAuth.getRedirectResult === 'function') {
-                await firebaseAuth.getRedirectResult();
-            }
-        } catch (err) {
-            const el = document.getElementById('authError');
-            if (el && err && err.message) {
-                el.style.display = '';
-                el.textContent = err.message;
-            }
-        }
+        // No redirect handling needed in popup-only flow
 
         // Ensure button is wired on first load
         const btn = document.getElementById('signInBtn');
@@ -77,14 +66,10 @@ async function signInWithGoogle() {
     try {
         await firebaseAuth.signInWithPopup(provider);
     } catch (err) {
-        try {
-            await firebaseAuth.signInWithRedirect(provider);
-        } catch (err2) {
-            const el = document.getElementById('authError');
-            if (el) {
-                el.style.display = '';
-                el.textContent = (err2 && err2.message) || (err && err.message) || 'Authentication failed';
-            }
+        const el = document.getElementById('authError');
+        if (el) {
+            el.style.display = '';
+            el.textContent = (err && err.message) || 'Authentication failed';
         }
     }
 }
