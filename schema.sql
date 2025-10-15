@@ -5,6 +5,9 @@
 create extension if not exists pgcrypto; -- for gen_random_uuid
 create extension if not exists pg_trgm;  -- for gin_trgm_ops
 
+-- Ensure user_id exists for existing deployments
+alter table if exists public.notes add column if not exists user_id text not null default '';
+
 -- 1) Notes table
 create table if not exists public.notes (
     id uuid primary key default gen_random_uuid(),
