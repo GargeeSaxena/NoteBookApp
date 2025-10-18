@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
@@ -24,21 +25,12 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Ensure Firebase redirect handler path doesn't 404 (serve SPA entry)
-app.get('/__/auth/handler', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Support Firebase Auth redirect handler path when not on Firebase Hosting
-// No special handler needed for popup flow
-
-// Public config for Firebase client
+// Public config for Supabase client
 app.get('/config', (req, res) => {
     res.json({
-        firebase: {
-            apiKey: process.env.FIREBASE_API_KEY || '',
-            authDomain: process.env.FIREBASE_AUTH_DOMAIN || '',
-            projectId: process.env.FIREBASE_PROJECT_ID || ''
+        supabase: {
+            url: process.env.SUPABASE_URL || '',
+            anonKey: process.env.SUPABASE_ANON_KEY || ''
         }
     });
 });

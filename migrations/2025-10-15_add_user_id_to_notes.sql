@@ -9,3 +9,4 @@ create index if not exists idx_notes_user_id on public.notes (user_id);
 -- alter table public.notes alter column user_id drop default;
 
 
+

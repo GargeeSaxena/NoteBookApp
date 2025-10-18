@@ -1,0 +1,112 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║   🔐 GOOGLE OAUTH SETUP - SIMPLE CHECKLIST                        ║
+║                                                                   ║
+║   Follow these steps in order. Check each box when done!         ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+┌───────────────────────────────────────────────────────────────────┐
+│ PART 1: GOOGLE CLOUD CONSOLE                                     │
+└───────────────────────────────────────────────────────────────────┘
+
+□ Step 1: Go to https://console.cloud.google.com
+          Sign in with Google account
+
+□ Step 2: Create/Select a project
+          - Click project dropdown at top
+          - Create new project: "My Notes App" OR select existing
+
+□ Step 3: Enable Google+ API
+          - Left sidebar: "APIs & Services" → "Library"
+          - Search: "Google+ API"
+          - Click "ENABLE"
+
+□ Step 4: Configure OAuth Consent Screen
+          - Left sidebar: "OAuth consent screen"
+          - Select: "External"
+          - App name: "My Notes App"
+          - Your email (pre-filled)
+          - Click through and save
+
+□ Step 5: Create OAuth Client ID
+          - Left sidebar: "Credentials"
+          - Click: "+ CREATE CREDENTIALS"
+          - Select: "OAuth client ID"
+          - Type: "Web application"
+          - Name: "My Notes Web App"
+          
+          Add Authorized redirect URIs (IMPORTANT!):
+          👉 https://mkxytkpewzmaucgwhahs.supabase.co/auth/v1/callback
+          
+          - Click "CREATE"
+
+□ Step 6: Copy credentials (SAVE THESE!)
+          ✏️ Client ID: _______________________________________
+          ✏️ Client Secret: ___________________________________
+
+┌───────────────────────────────────────────────────────────────────┐
+│ PART 2: SUPABASE DASHBOARD                                       │
+└───────────────────────────────────────────────────────────────────┘
+
+□ Step 1: Go to https://app.supabase.com
+          Sign in to your account
+
+□ Step 2: Select project "note-app-c70ad"
+
+□ Step 3: Go to Authentication
+          - Left sidebar: "Authentication" (shield icon)
+          - Top tabs: "Providers"
+          - Find: "Google"
+          - Click to expand
+
+□ Step 4: Enable and configure
+          - Toggle: ON
+          - Paste Client ID (from Part 1, Step 6)
+          - Paste Client Secret (from Part 1, Step 6)
+          - Click "SAVE"
+
+┌───────────────────────────────────────────────────────────────────┐
+│ PART 3: TEST IT!                                                 │
+└───────────────────────────────────────────────────────────────────┘
+
+□ Step 1: Test locally
+          Open terminal:
+          > npm start
+          
+          Open browser: http://localhost:3000
+          Click "Sign in / Sign up with Google"
+          Should redirect to Google and back!
+
+□ Step 2: Deploy to Render
+          - Set environment variables in Render
+          - Push code to GitHub
+          - Test on live URL
+
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║   ✅ IF ALL BOXES ARE CHECKED, YOU'RE DONE!                      ║
+║                                                                   ║
+║   🎉 Your authentication should now work perfectly!              ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────
+
+QUICK REFERENCE:
+
+📍 Google Cloud Console: https://console.cloud.google.com
+📍 Supabase Dashboard: https://app.supabase.com
+📍 Your Project: note-app-c70ad
+
+🔑 CRITICAL - Redirect URI must be EXACTLY:
+   https://mkxytkpewzmaucgwhahs.supabase.co/auth/v1/callback
+
+💾 SAVE YOUR CREDENTIALS:
+   You'll need the Client ID and Client Secret from Google
+   to paste into Supabase!
+
+────────────────────────────────────────────────────────────────────
+
+Need detailed instructions? Open: GOOGLE_OAUTH_SETUP.md
+
