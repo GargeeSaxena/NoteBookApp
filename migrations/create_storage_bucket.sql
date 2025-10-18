@@ -6,35 +6,38 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('note-attachments', 'note-attachments', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Policy: Allow authenticated users to upload
-INSERT INTO storage.policies (name, bucket_id, definition, check_expression)
-VALUES (
-  'Allow authenticated uploads',
-  'note-attachments',
-  'bucket_id = ''note-attachments'' AND auth.role() = ''authenticated''',
-  'bucket_id = ''note-attachments'' AND auth.role() = ''authenticated'''
-)
-ON CONFLICT DO NOTHING;
+-- Enable RLS on storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Allow authenticated users to upload files
+CREATE POLICY "Allow authenticated uploads"
+ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'note-attachments');
 
 -- Policy: Allow public reads
-INSERT INTO storage.policies (name, bucket_id, definition)
-VALUES (
-  'Allow public reads',
-  'note-attachments',
-  'bucket_id = ''note-attachments'''
-)
-ON CONFLICT DO NOTHING;
+CREATE POLICY "Allow public reads"
+ON storage.objects
+FOR SELECT
+TO public
+USING (bucket_id = 'note-attachments');
 
--- Policy: Allow authenticated users to delete
-INSERT INTO storage.policies (name, bucket_id, definition, check_expression)
-VALUES (
-  'Allow authenticated deletes',
-  'note-attachments',
-  'bucket_id = ''note-attachments'' AND auth.role() = ''authenticated''',
-  'bucket_id = ''note-attachments'' AND auth.role() = ''authenticated'''
-)
-ON CONFLICT DO NOTHING;
+-- Policy: Allow authenticated users to update their files
+CREATE POLICY "Allow authenticated updates"
+ON storage.objects
+FOR UPDATE
+TO authenticated
+USING (bucket_id = 'note-attachments')
+WITH CHECK (bucket_id = 'note-attachments');
+
+-- Policy: Allow authenticated users to delete their files
+CREATE POLICY "Allow authenticated deletes"
+ON storage.objects
+FOR DELETE
+TO authenticated
+USING (bucket_id = 'note-attachments');
 
 -- Verify the bucket was created
-SELECT * FROM storage.buckets WHERE id = 'note-attachments';
+SELECT id, name, public FROM storage.buckets WHERE id = 'note-attachments';
 
