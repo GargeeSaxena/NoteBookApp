@@ -2,8 +2,6 @@ package com.notebook.app.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -35,7 +33,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        setSupportActionBar(binding.toolbar)
         setupRecyclerView()
         setupClickListeners()
         observeViewModels()
@@ -68,6 +65,10 @@ class MainActivity : AppCompatActivity() {
             if (userId != null) {
                 notesViewModel.refreshNotes(userId)
             }
+        }
+
+        binding.btnSignOut.setOnClickListener {
+            showSignOutConfirmation()
         }
     }
 
@@ -110,21 +111,6 @@ class MainActivity : AppCompatActivity() {
         if (userId != null) {
             notesViewModel.refreshNotes(userId)
             authViewModel.checkAuthStatus()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_sign_out -> {
-                showSignOutConfirmation()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
