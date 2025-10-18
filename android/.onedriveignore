@@ -1,0 +1,16 @@
+# OneDrive - Exclude build directories
+# Note: OneDrive doesn't natively support .onedriveignore
+# But you can manually exclude these via OneDrive settings
+
+# Build directories to exclude from OneDrive sync:
+build/
+.gradle/
+app/build/
+app/.cxx/
+*.iml
+.idea/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+

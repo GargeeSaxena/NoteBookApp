@@ -1,15 +1,24 @@
 # 📝 My Notes - Notebook App
 
-A beautiful, modern notes application with Google authentication powered by Supabase.
+A beautiful, modern notes application with Google authentication powered by Supabase, available as both a web app and Android client.
 
 ## 🌟 Features
 
+### Web App
 - ✅ Google Sign-in (Simple & Secure)
 - ✅ Create and view notes
 - ✅ User-specific notes (each user sees only their notes)
 - ✅ Beautiful, modern UI
 - ✅ Real-time updates
 - ✅ Deployed on Render with Supabase backend
+
+### Android Client
+- ✅ Email/Password authentication via Supabase
+- ✅ Full CRUD operations for notes
+- ✅ File attachment support with Supabase Storage
+- ✅ Premium status display
+- ✅ Material Design 3 with dark theme
+- ✅ Modern MVVM architecture
 
 ## 🚀 Recent Updates
 
@@ -99,26 +108,40 @@ Open http://localhost:3000 in your browser.
 
 ```
 NoteBook App/
-├── index.html          # Main HTML page
-├── styles.css          # Styling
-├── auth.js            # Authentication logic (Supabase Auth)
-├── script.js          # Notes app logic
-├── server.js          # Express server
-├── schema.sql         # Database schema
-├── package.json       # Dependencies
-├── .env               # Environment variables (local)
-├── README.md          # This file
-├── QUICK_START.md     # Quick setup guide
-└── SETUP_AUTH.md      # Detailed auth setup
+├── android/                 # Android client (Kotlin)
+│   ├── app/                 # Android app module
+│   ├── ANDROID_SETUP_GUIDE.md  # Detailed Android setup
+│   └── README.md            # Android quick start
+├── migrations/              # Database migrations
+├── index.html               # Web app main page
+├── styles.css               # Web app styling
+├── auth.js                  # Web authentication logic
+├── script.js                # Web notes logic
+├── server.js                # Express server
+├── schema.sql               # Database schema
+├── package.json             # Node.js dependencies
+├── .env                     # Environment variables (local)
+├── README.md                # This file
+├── QUICK_START.md           # Quick setup guide
+└── SETUP_AUTH.md            # Detailed auth setup
 ```
 
 ## 🛠 Technologies Used
 
+### Web App
 - **Frontend:** Vanilla JavaScript, HTML5, CSS3
 - **Backend:** Node.js, Express
 - **Database:** Supabase (PostgreSQL)
 - **Authentication:** Supabase Auth with Google OAuth
 - **Hosting:** Render
+
+### Android Client
+- **Language:** Kotlin
+- **Architecture:** MVVM
+- **UI:** Material Design 3, XML layouts, ViewBinding
+- **Backend:** Supabase (Auth, Database, Storage)
+- **Async:** Kotlin Coroutines
+- **Min SDK:** 24 (Android 7.0), **Target SDK:** 35 (Android 15)
 
 ## 🔒 Security
 
@@ -153,9 +176,15 @@ NoteBook App/
 
 ## 📚 Documentation
 
+### Web App
 - **QUICK_START.md** - Get started in 5 minutes
 - **SETUP_AUTH.md** - Detailed authentication setup guide
 - **schema.sql** - Database schema and comments
+
+### Android Client
+- **android/README.md** - Android quick start guide
+- **android/ANDROID_SETUP_GUIDE.md** - Comprehensive Android setup and troubleshooting
+- **android/local.properties.example** - Configuration template
 
 ## 👨‍💻 Author
 
