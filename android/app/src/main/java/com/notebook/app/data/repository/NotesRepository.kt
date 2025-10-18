@@ -166,7 +166,9 @@ class NotesRepository {
             )
 
             val result = client.from("attachments")
-                .insert(attachment)
+                .insert(attachment) {
+                    select()
+                }
                 .decodeSingle<Attachment>()
 
             Result.success(result)
